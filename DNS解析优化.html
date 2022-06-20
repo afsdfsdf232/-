@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div>
+        <p>
+            当浏览器从服务器获取资源时，必须先将该跨域域名解析为IP地址，然后浏览器才能发出请求。此过程为 DNS 解析。 现在大多数新版本浏览器针对 DNS 解析进行了优化，比如 DNS 缓存。 典型的一次 DNS 解析需耗费 20 - 120 毫秒，所花费时间可忽略不计。 但是网站中的资源依赖于多个不同的域的时候，时间就会成倍增加，从而会增加网站的加载时间。 比如在某些图片较多的页面中，在发起图片加载请求前预先把域名解析好将会有至少5%的图片加载速度的提升。
+        </p>
+        <br>
+        <br>
+        <p>一般来说，在前端优化中与DNS有关的有2点</p>
+        <ul>
+            <li>减少 DNS 的请求次数</li>
+            <li>进行 DNS 预获取： DNS Prefetch</li>
+        </ul>
+    </div>
+
+    <div>
+        <h4>清除 DNS 缓存记录</h4>
+        <p>
+            浏览器：
+            <ul>
+                <li>清除DNS缓存：chrome://net-internals/#dns</li>
+                <li>有时候需要同时清除套接字缓存池：chrome://net-internals/#sockets</li>
+            </ul>
+        </p>
+        <p>
+            清除系统 DNS 缓存
+            <ul>
+                <li>
+                    windos 查看系统缓存：ipconfig /displaydns
+                </li>
+                <li>
+                    windos 清除系统缓存：ipconfig/flushdns
+                </li>
+            </ul>
+        </p>
+    </div>
+
+    <!-- 方案 -->
+    <div>
+        <p>减少域名的数量可以避免 DNS 查找时间过长，但是会减少并行下载的响应时间。建议将资源划分为 2-4 个域名</p>
+        <div>
+            dns-prefetch: HTML 的 link 标签的 rel 属性可以提供该功能，然后在 href属性中指明要跨域的域名 例如
+            <\link ref="dns-prefetch" href="https//fonts.googleapis.com">
+        </div>
+        <p>延长 DNS 缓存时间</p>
+        <p>尽可能使用 A 或者 AAAA 记录代替 CNAME</p>
+        <p>使用 CDN 加速域名</p>
+        <p>自己搭建 DNS 服务</p>
+    </div>
+</body>
+
+</html>
+<!-- p11 -->

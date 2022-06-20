@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div>
+        <h3>输入 url 到 看到页面数据的过程</h3>
+        <p>(1) 浏览器收到URL，到网络请求线程的开启</p>
+        <p>(2) 一个完整的HTTP请求并发出</p>
+        <p>(3) 服务器收到请求并转到具体的处理后台</p>
+        <p>(4) 前后台之间的HTTP交互和涉及的缓存机制</p>
+        <p>(5) 浏览器接收到数据包的关键渲染路径</p>
+        <p>(6) js引擎的解析过程</p>
+    </div>
+
+    <div>
+        <h3>DNS 域名解析</h3>
+        <div>
+            本机主机
+            <p>递归查找： 1. 浏览器缓存 2. 系统自身DNS缓存 3. hosts 文件
+            </p>
+        </div>
+        <div>
+            <p>迭代查询： 1. 根域名服务器 -> 告知顶级域名服务器； 2. COM顶级域名服务器 -> 告知权限域名服务器； 3. 权限域名服务器 -> 返回 IP 或者报错
+            </p>
+
+        </div>
+    </div>
+    <div>
+        <h3>TCP 连接</h3>
+        <p>3次握手</p>
+        <p>1. 客户端随机生成数 seq， 假设其值为 t， 并将标志位 SYN = 1， 将这些数据打包发送给服务器，客户端进入等待服务端确认的状态</p>
+
+    </div>
+</body>
+
+</html>
+
+<!-- p15-16 -->

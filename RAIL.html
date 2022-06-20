@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h1>RAIL</h1>
+    <h1>RAIL 是Response Animation Idle Load 简称</h1>
+    <p>响应（Response）: 尽可能快速响应用户，应在100ms内响应用户输入</p>
+    <p>动画（Animation）:在展示动画时候，每一帧应该以 16ms 进行渲染，避免卡顿 </p>
+    <p>空闲（Idle）: 当使用JavaScript 主线程时候，应该把任务划分到执行时间小于 50ms 的片段中，这样可以释放线程以进行用户交互</p>
+    <p>加载（Load）: 应该在小于 1s 的时间内加载完成你的网站，并可以进行用户交互 </p>
+    <br>
+    <br>
+    <p>由Google Chrome团队于2015年提出的性能模型，用于提升浏览器内的用户体验和性能。</p>
+    <p>RAIL 模型的理念是“以用户为中心” 使用户满意</p>
+
+
+    <br>
+    <br>
+    <div>tps:
+        <p>1. js中到任务执行时间超过50ms被称为长任务，在任务执行过程中无法响应用户交互</p>
+        <p>2. 动画指标，每一帧应该以10ms进行渲染，目前大多数设备的屏幕刷新率为 60次每秒，那么浏览器渲染动画或者页面的每一帧的速率也需要跟设备的刷新频率一致。所以根据60fps 帧率的计算，一帧图像生成预算为16ms(1000ms / 60 ≈ 16.66ms)，除去浏览器绘制新帧时间，留给代码执行时间仅 10ms 左右。如果无法符合预期，帧率将下降就会出现屏幕抖动卡顿</p>
+    </div>
+    <br>
+    <br>
+    <div>
+        <h1>RAIL 具体的性能指标</h1>
+        <h3>基于用户体验的性能指标是Google在web.dev 提出来的。其中包括一下几个比较重要的性能指标</h4>
+            <div>
+                <p>FCP(First Contentful Paint) 首次内容绘制，浏览器首次绘制来自DOM的内容的时间，内容必须是文字、图片（包含背景色）、非白色的canvas或者SVG，也包括带有正在加载中的web字体文件。</p>
+                <h4>速度指标</h4>
+                <table border>
+                    <tr>
+                        <td>FCP时间（s）</td>
+                        <td>颜色编码</td>
+                        <td>FCP分数（HTTP存档百分位数）</td>
+                    </tr>
+                    <tr>
+                        <td>0-2</td>
+                        <td>绿色（快速）</td>
+                        <td>75-100</td>
+                    </tr>
+                    <tr>
+                        <td>2-4</td>
+                        <td>橙色（中等）</td>
+                        <td>50-74</td>
+                    </tr>
+                    <tr>
+                        <td>超过4</td>
+                        <td>红色（慢）</td>
+                        <td>0-49</td>
+                    </tr>
+                </table>
+                <h4>优化方案</h4>
+                <a href="https://web.dev/fcp/#how-to-improve-fcp" target="_blank">https://web.dev/fcp/#how-to-improve-fcp</a>
+            </div>
+            <br>
+            <div>
+                <p>LCP(Largest Contentful Paint) 最大内容绘制，可视区域中最大的内容元素呈现到屏幕上的时间，用以估算页面的主要内容对用户可见时间</p>
+                <br>
+                <p>LCP 考虑的元素</p>
+                <br>
+                <ul>
+                    <li>img元素</li>
+                    <li>image 元素内的 svg 元素</li>
+                    <li>video 元素（封面图）</li>
+                    <li>通过url()函数加载的背景图片的元素</li>
+                    <li>包含文字节点或者其它内联级文本元素子级的 块级 元素</li>
+                </ul>
+                <br>
+                <p>为了提供良好的用户体验，网站应争取使用2.5秒或者更短的“最大内容绘画”。衡量移动设备和台式机的页面加载量的第75个百分位数是一个很好的衡量标准</p>
+                <h4>速度指标</h4>
+                <table border>
+                    <tr>
+                        <td>LCP时间（s）</td>
+                        <td>颜色编码</td>
+                    </tr>
+                    <tr>
+                        <td>0-2.5</td>
+                        <td>绿色（快速）</td>
+                    </tr>
+                    <tr>
+                        <td>2.5-4</td>
+                        <td>橙色（中等）</td>
+                    </tr>
+                    <tr>
+                        <td>超过4</td>
+                        <td>红色（慢）</td>
+                    </tr>
+                </table>
+                <h4>优化方案</h4>
+                <a href="https://web.dev/optimize-lcp" target="_blank">https://web.dev/optimize-lcp</a>
+            </div>
+            <div>
+                <p>FID(First Input Delay) 首次输入延迟，从用户第一次与页面交互（例如单击连接、点击按钮等）到浏览器实际能够响应该交互的时间</p>
+                <br>
+                <br>
+                <p>输入延迟是因为浏览器的主线程正忙着做其他事情，所以不能响应。发生这种情况的一个常见原因就是浏览器正忙着解析和执行应用程序加载大量计算的 JavaScript</p>
+                <br>
+                <p>第一次输入延迟通常发生在第一次内容绘制（TCP）和可持续交互时间（TTI）之间，因为页面已经呈现了一些内容，但还不可能可靠的交互</p>
+                <br>
+                <br>
+                <h4>速度指标</h4>
+                <p>100ms内: 优秀</p>
+                <p>100ms-300ms: 中等水平</p>
+                <p>大于300ms: 差</p>
+
+                <h4>优化方案</h4>
+                <a href="https://web.dev/fid/#how-to-improve-fid" target="_blank">https://web.dev/fid/#how-to-improve-fid</a> <br>
+                <a href="https://web.dev/optimize-fid" target="_blank">https://web.dev/optimize-fid</a>
+            </div>
+            <div>
+                <p>TTI(Time to Interactive) 表示网页第一次 完全达到可交互状态 的时间点，浏览器可以持续性的响应用户的输入。完全达到可交互状态的时间点是在最后一个长任务（Long Task 50ms以上才能完成的任务）完成的时间，并且在随后的5s内网络和主线程是空闲的</p>
+                <p>从定义上来看，中文名叫可持续交互时间或者可流畅交互时间更合适</p>
+                <h4>速度指标</h4>
+                <table border>
+                    <tr>
+                        <td>TTI指标（以秒为单位）</td>
+                        <td>颜色编码</td>
+                    </tr>
+                    <tr>
+                        <td>0-3.8</td>
+                        <td>绿色（快速）</td>
+                    </tr>
+                    <tr>
+                        <td>3.9-7.3</td>
+                        <td>橙色（中等）</td>
+                    </tr>
+                    <tr>
+                        <td>超过7.3</td>
+                        <td>红色（慢）</td>
+                    </tr>
+                </table>
+                <h4>优化方案</h4>
+                <a href="https://web.dev/tti/#how-to-improve-tti" target="_blank">https://web.dev/tti/#how-to-improve-tti</a>
+            </div>
+
+            <div>
+                <p>TBT(Total Block Time) 总阻塞时间，度量了TCP 和 TTI之间总时间，在该范围内，主线程被阻塞足够长的时间以防止输入响应</p>
+                <br>
+                <p>只要存在长任务，该主线程就会被视为“阻塞”该任务在主线程上运行超过50ms。我们说主线程“被阻止”是因为浏览器无法中断正在进行的任务。因此，如果用户确实在较长的任务中间与页面进行交互，则浏览器必须等待任务完成才能响应</p>
+                <br>
+                <p>如果任务够长（例如 ，超过50毫秒的任何时间），则用户很可能会注意到延迟并感觉页面缓慢或过时。</p>
+                <br>
+                <p>给定的长任务的阻止时间是其持续时间超过50ms。页面的总阻塞时间是FCP和TTI之间发生的每个长任务的阻塞时间总和。</p>
+                <h4>速度指标</h4>
+                <table border>
+                    <tr>
+                        <td>TBT指标（以毫秒为单位）</td>
+                        <td>颜色编码</td>
+                    </tr>
+                    <tr>
+                        <td>0-300</td>
+                        <td>绿色（快速）</td>
+                    </tr>
+                    <tr>
+                        <td>300-600</td>
+                        <td>橙色（中等）</td>
+                    </tr>
+                    <tr>
+                        <td>超过600</td>
+                        <td>红色（慢）</td>
+                    </tr>
+                </table>
+                <h4>优化方案</h4>
+                <a href="https://web.dev/tbt/#how-to-improve-tbt" target="_blank">https://web.dev/tbt/#how-to-improve-tbt</a>
+
+            </div>
+            <div>
+                <p>CLS(Cumulative Layout Shift) 累计布局偏移，CLS会测量在页面整个生命周期中发生的每个意外的布局移位的所有单独布局移位分数的总和，它是保证页面的视觉稳定性从而提升用户体验的指标方案</p>
+                <br>
+                <p>tps: 例子：你是否曾经在页面上突然发生变化时在没有任何警告的情况下，文字移动了，并且你失去了位置。甚至：你将要点击一个链接或者按钮，在手指点下去瞬间，链接或者按钮位置改变了，你将点击了其他内容
+                </p>
+                <br>
+                <h4>速度指标</h4>
+                <table border>
+                    <tr>
+                        <td>CLS指标（以毫秒为单位）</td>
+                        <td>颜色编码</td>
+                    </tr>
+                    <tr>
+                        <td>0-0.1</td>
+                        <td>绿色（快速）</td>
+                    </tr>
+                    <tr>
+                        <td>0.1-0.25</td>
+                        <td>橙色（中等）</td>
+                    </tr>
+                    <tr>
+                        <td>超过0.25</td>
+                        <td>红色（慢）</td>
+                    </tr>
+                </table>
+                <h4>优化方案</h4>
+                <a href="https://web.dev/cls/#how-to-improve-cls" target="_blank">https://web.dev/cls/#how-to-improve-cls</a> <br>
+                <a href="https://web.dev/optimize-cls" target="_blank">https://web.dev/optimize-cls</a>
+            </div>
+    </div>
+    <!-- p4-12 -->
+</body>
+
+</html>

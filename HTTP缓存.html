@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h5>缓存的原理是在首次请求后保存一份请求资源的响应副本，当用户再次发起相同的请求后，如果判断缓存命中则拦截请求，将之前存储的响应副本返回给用户，从而避免重新向服务器发起资源</h5>
+    <p>
+        HTTP 缓存可分为强制缓存和协商缓存，二者最大的区别在于判断缓存命中时，浏览器是否需要向服务器进行询问协商缓存的相关信息，进而判断是否需要就响应内容进行重新请求
+    </p>
+    <br>
+    <h3>强制缓存</h3>
+    <p>对于强制缓存而言，如果浏览器判断所请求的目标资源有效命中，则可直接从强制缓存中返回响应，无须与服务器进行通信</p>
+    <p>强制缓存相关字段是 expires 和 cache-control</p>
+    <p>expires: res.writeHead(200, Expires: new Date('2022-5-20').toUTCString())</p>
+    <p>expires是在HTTP1.0协议中声明用来控制缓存失效日期时间的字段，它是由服务端通过响应头来告诉浏览器，如果当前请求的本地时间戳小于express，则说明缓存未过期，可直接使用浏览器缓存资源，否则，才允许向服务端发起新的请求。</p>
+    <br>
+    <p>cache-Control: res.writeHead(200, {'Cache-Control':'max-age=60'})</p>
+    <p>cache-control是 HTTP1.1 新增字段，用来完善和扩展express。 cache-control是通过 max-age 来设定资源过期时间（秒为单位），是以首次请求资源为开始时间 max-age 秒内，不需要重新请求资源，过了时间才会再次在服务端获取资源
+    </p>
+    <p>cache-control的参数 no-cache和no-store, no-store:表示禁止使用任何缓存策略； no-cache：表示为强制进行协商缓存；no-store和no-cache为互斥属性值，不能同时设置</p>
+    <p>cache-control的参数 private 和 public。public: 表示响应资源既可被浏览器缓存，又可以被代理服务器缓存；private：表示响应资源只能被浏览器缓存，若未显示指定则为默认规则；private 和 public 为一组互斥属性值</p>
+    <p>s-maxage: 代理服务器缓存时间，当public时生效</p>
+    <br>
+    <br>
+
+    <h3>协商缓存</h3>
+    <p>协商缓存就是在使用本地缓存之前，需要向服务器发起一次GET请求，与之前协商当前浏览器保存的本地缓存是否已经过期。</p>
+    <p>参数：last-modified: 设置最后一次修改时间，res.setHeader('last-modified'), 获取header中时间，req.headers['if-modified-since']; 服务端每次判断这2个时间是否一致，一致则返回新的资源，否则设置 res.setHeader('cache-control','no-cache');返回 res.end(data)</p>
+    <p>last-modified 缺陷：①：仅仅修改文件名称未修改内容不会使用缓存。②：时间单位为秒，如果内容离上次修改时间在毫秒内是不会更新资源的</p>
+    <br>
+    <p>基于 ETag 的协商缓存（为了弥补通过时间戳判断的不足，HTTP1.1规范新增了一个 ETAG的头信息，即实体标签（Entity Tag））</p>
+    <p>ETag原理：服务器为不同资源进行哈希运算生成一个字符串，该字符串类似于文件指纹，只要文件内容编码存在差异，对应的ETag文件内容编码存在差异，对应的ETag标签值就会不同，因此可以使用ETag进行协商缓存。</p>
+    <pre>ETag使用：
+        const data = fs.readFileSync('./img/03.jpg')
+        const etagContent = etag(data);
+        // 获取客户端上一次的 Tag
+        const ifNoneMatch = req.headers['if-none-match'];
+        if (ifNoneMatch === etagContent) {
+            // 数据一样，告诉客户端获取本地资源
+            res.statusCode = 304;
+            res.end();
+            return
+        }
+        
+        // 设置 etag
+        res.setHeader('etag', etagContent);
+        res.setHeader('Cache-Control', 'no-cache');
+        res.end(data)
+    </pre>
+    <p>ETag缺陷：①：服务端性能问题，文件资源过大计算tag签名时间长；②：ETag字段生成分强验证和弱验证，强验证会保证每个字节都相同，但开销大，弱验证会对部分字节进行验证，能提升性能但是会降低准确率</p>
+    <br>
+    <br>
+    <h3>缓存决策</h3>
+    <!-- p12-->
+</body>
+
+</html>

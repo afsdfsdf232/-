@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div>
+        <h2>HTTP 压缩传输的数据资源</h2>
+        <h4>HTTP 响应数据压缩</h4>
+        <br>
+        <h5>使用 Gzip 压缩文件</h5>
+        <br>
+        <p>
+            浏览器和服务器之间会主使用主动协商机制。浏览器发送 Accept-Encoding 首部，其中包含有它所支持的压缩算法，以及各自的优先级，服务器则从中选择一种，使用该算法对 响应的消息主体进行压缩，并且发送 Content-Encoding 首部来告知浏览为它选择了哪一种算法。由于该内容协商过程是基于编码类型来选择资源的展现形式的，在响应中 Vary首部中至少要包含 Accept-Encoding; 这样的话，缓存服务器就可以对资源的不同展现形式进行缓存。
+        </p>
+    </div>
+    <br>
+    <br>
+    <h2>头部数据压缩</h2>
+    <p>HTTP1 不能实现头部数据压缩</p>
+    <br>
+    <p>HTTP/2 对这一点做了优化，引入了头部信息压缩机制。一方面，头信息使用gzip或者compress压缩在发送。另一方面，客户端和服务器同时维护一张头信息表，所有字段都会存入这个表，生成一个索引号，以后就不用发送同样的字段，只发送索引信息，这样就提高速度了</p>
+    <br>
+    <br>
+    <h2>请求体数据压缩</h2>
+    <br>
+    <p>HTTP请求的发起方（例如浏览器），无法事先知晓要访问的服务器是否支持解压，所以现阶段浏览器没有压缩正文。需要自定义实现解压，用代码实现</p>
+
+
+</body>
+
+</html>

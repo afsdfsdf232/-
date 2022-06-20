@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <p>浏览器获取到 HTML 到最终屏幕上显示内容需要完成以下步骤：</p>
+    <p>1.处理 HTML 标记并构建 DOM 树</p>
+    <p>2.处理 CSS 标记并构建 CSSOM 树</p>
+    <p>3.将 DOM 和 CSSOM 合并成一个 render tree</p>
+    <p>4.根据渲染树来布局，以计算每个节点的几何信息</p>
+    <p>5.将各个节点绘制到屏幕上</p>
+    <br>
+    <p>经过以上整个流程我们才能看到屏幕上渲染的内容，优化关键渲染路径就是只最大限度缩短上述第1步至第 5 步耗费的总时间，让用户最快看到首次渲染的内容。</p>
+    <br>
+    <br>
+    <p>经过分析根据开发者对优化渲染过程的控制力度，可以大体将其划分为五个部分： JavaScript处理、计算样式、页面布局、绘制与合成，一下介绍各部分的功能与作用</p>
+
+    <p>Javascript处理：前端项目中经常会需要响应用户的操作，通过JavaScript对数据集进行计算，操作DOM元素，并展示动画视觉效果。对于动画，除了JavaScript，也可以考虑使用 CSS Animations、Transitions 等技术。</p>
+    <p>计算样式：在解析CSS文件后，浏览器需要根据各种选择器去匹配所要应用CSS规则的元素节点，然后计算出每个元素的最终样式。</p>
+    <p>页面布局：指的是浏览器在计算完成样式后，会对每个元素的尺寸大小和屏幕位置进行计算。由于每个元素可能会受到其它元素的影响，并且位于DOM树结构中的子节点元素，总会受到父级元素修改的影响，所以页面布局的计算经常会发生。</p>
+    <p>绘制：在页面布局确定后，接下来就可以绘制元素的可视内容，包括颜色、边框、阴影以及文本和图像</p>
+    <p>合成：通常由于页面中不同部分可能被绘制在多个图层上，所以绘制完成后需要将多个图层按照正确的顺序在屏幕上合成，以便最终正确的渲染出来。</p>
+
+    <br>
+    <br>
+    <h3>关键路径优化</h3>
+    <br>
+    <h4>DOM 优化</h4>
+    <div>
+        <p>HTML 文件尺寸应该尽可能的小（删除 注释，空格，换行，不使用的节点）</p>
+        <p>优化方式：缩小HTML尺寸，使用gzip压缩，使用缓存</p>
+    </div>
+    <br>
+    <br>
+    <h4>CSSOM 优化</h4>
+    <div>
+        <p>压缩csss</p>
+        <p>加载关键css，去除当前页面不需要的样式</p>
+        <p>加载需要的样式，link 判断加载，设置媒体查询 media</p>
+        <p>适当内联样式，解析速度快</p>
+        <p>避免使用 @import 会阻塞页面加载（会串行加载，link标签会并行加载）</p>
+        <p>使用类选择器替代标签选择器</p>
+        <p>避免使用通配符选择器，开销大</p>
+        <p>降低选择器的复杂度</p>
+        <p>使用 BEM 规范：块（Block）、元素（Element）、修饰符（Modifier）</p>
+        <ul>
+            <li>
+                中画线（-）：仅作为连字符使用，表示块或者子元素的多个单词之间的连接符。
+            </li>
+            <li>单下画线（_）: 作为描述一个块或其子元素的一种状态</li>
+            <li>
+                双下画线（__）: 作为连接块与块的子元素
+            </li>
+            <pre>
+               // 常规写法
+               .mylist {}
+               .mylist .item {}
+               .product-list .product-list-item {}
+               
+               // BEM 写法
+               .mylist {}
+               .mylist__item {}
+               .product-list__item {}
+            
+               //状态 small
+               .mylistt__item_small{}
+            </pre>
+        </ul>
+    </div>
+    <br>
+    <br>
+    <h4>优化 JavaScript</h4>
+    <div>
+        <p>代码压缩，删除不使用的代码，使用缓存</p>
+        <p>异步加载JavaScript</p>
+        <p>避免同步请求</p>
+        <p>延迟解析 JavaScript</p>
+        <p>避免运行时间长的 JavaScript</p>
+    </div>
+    <p> script: defer(异步下载，等D OM加载完成执行，多个脚本顺序执行)； async(异步加载，多个脚本谁先下载完成谁先执行)</p>
+    <p>预加载：link rel="preload" href="index.js"; 预加载不会执行，等到真正script加载才会执行</p>
+    <p>预加载将来可能用到的资源(慎用)，非当前页面资源，否则会重复加载： link rel='prefetch' href="index.js"</p>
+    <p>动画尽量使用css实现，或者使用requestAnimationFrame</p>
+    <p>定时器实现动画可能在低端设备出现卡顿现象（定时器执行时间一般会晚于设定时间，需要在主线程任务执行完成之后才会去查看定时器任务）</p>
+    <p>requestAnimationFrame将回调函数的执行时机交由系统来决定，即如果浏览器的刷新频率是 60Hz，则回调函数约16.7ms执行一次，如果刷新频率是75Hz则13.3ms执行一次回调; 计算公式 （1000ms/频率）次</p>
+    <p>恰当的使用 Web Worker</p>
+    <div>
+        <p>Worker 注意事项：</p>
+        <ul>
+            <li>DOM限制：Worker 无法读取主线程处所网页的DOM对象，也无法使用；可以访问navigator和location对象</li>
+            <li>文件读取限制：Worker子线程无法访问本地文件系统，要求加载的脚本来自网络。</li>
+            <li>通信限制：主线程和Worker子线程不在同一个上下文内，无法直接通信，需要通过消息来完成。</li>
+            <li>脚本执行限制：虽然Worker可以通过XMLHTTPRequest对象发起Ajax请求，但不能使用alert()和confirm（）方法在页面弹出</li>
+            <li>同源限制：Worker 子线程执行的代码文件需要与主线程的代码文件同源</li>
+        </ul>
+    </div>
+    <br>
+    <br>
+    <h4>页面布局与重绘</h4>
+    <p>触发页面布局与重绘的操作</p>
+    <ul>
+        <li>首先就是对DOM元素几何属性的修改，这些属性包括 width height padding margin left top等，某些元素的这些属性发生变化时，便会波及与它相关的所有节点元素进行几何属性的重新计算，这会带来巨大的计算量；</li>
+        <li>其次是更改DOM树的结构，浏览器进行页面布局时的计算顺序，可类比树的前序遍历，即从上向下，从左向右。这里对DOM树节点的增删改查移动等操作，只会影响当前节点后的所有节点元素，而不会再次影响前面已经遍历过的元素；</li>
+        <li>最后一类是获取某些特定的属性值操作，比如页面可见区域宽高 offsetWidth offsetHeight 页面视窗中元素与视窗边界的距离 offsetTop offsetLeft 类似的属性值还有 scrollTop scrollLeft scrollWidth scrollHeight clientTop clientWidth clientHeight 及调用window.getComputedStyle 方法</li>
+    </ul>
+    <div>
+        <h5>解决方案</h5>
+        <p>避免对样式频繁改动</p>
+        <p>使用类名对样式逐条修改，动态设置类名class</p>
+        <p>缓存对敏感属性值的计算</p>
+    </div>
+</body>
+<!-- p9 -->
+
+</html>
